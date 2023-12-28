@@ -61,24 +61,24 @@ void setup() {
 void loop() {
   if(digitalRead(btn_1) == LOW) {
       FootSwetch btn1 = FootSwetch(pin_e, pin_l, btn_1, 0, "quadruple");
-      btn1.pin_4Action();
+      btn1.pinAction();
   }
   if(digitalRead(btn_2) == LOW) {
       FootSwetch btn2 = FootSwetch(pin_e, pin_l, btn_2, 1, "triple");
-      btn2.pin_4Action();
+      btn2.pinAction();
   } else if ((digitalRead(pin_e) == LOW) && (digitalRead(pin_l) == LOW)){
-      footSwetch.piscaSpeed();
+     footSwetch.confirm();
   }
   if(digitalRead(btn_3) == LOW) {
       FootSwetch btn3 = FootSwetch(pin_e, pin_l, btn_3, 2, "double");
-      btn3.pin_4Action();
+      btn3.pinAction();
   }
   if(digitalRead(btn_4) == LOW) {
       FootSwetch btn4 = FootSwetch(pin_e, pin_l, btn_4, 3, "double");
-      btn4.pin_4Action();
+      btn4.pinAction();
   }
   if(digitalRead(btn_5) == LOW) {
       FootSwetch btn5 = FootSwetch(pin_e, pin_l, btn_5, 4, "triple");
-      btn5.pin_4Action();
+      btn5.pinAction();
   }
 }

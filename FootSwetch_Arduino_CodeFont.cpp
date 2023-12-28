@@ -1,4 +1,3 @@
-#include "Arduino.h"
 #include "Console.h"
 #include "FootSwetchClass.h"
 #include "CI74HC595.h"
@@ -62,7 +61,7 @@ void FootSwetch::confirmeLed(int blinks){
   }
 }
 
-void FootSwetch::piscaSpeed(){
+void FootSwetch::confirm(){
   int cont = 0;
   while (cont == 0){
     ctrl74hc595.bits_ci(0xFE);
@@ -70,28 +69,30 @@ void FootSwetch::piscaSpeed(){
     ctrl74hc595.bits_ci(0x00);
     delay(100);
     tmpInicio = digitalRead(this->btns); //le o estado do botão - HIGH OU LOW
-    if (digitalRead(this->btns) == HIGH || !digitalRead(this->btns) == LOW) {
+    if (!digitalRead(this->btns) == LOW) {
       tmpInicio = millis();
       while ((millis() - tmpInicio < tmpLongo) && (digitalRead(this->btns) == LOW));
-        if (millis() - tmpInicio < tmpCurto) {
-          continue;
-        }else if ((millis() - tmpInicio >= tmpLongo) && (digitalRead(pin_e) == LOW) && (digitalRead(pin_l) == LOW)){     
-        //PRESS 2s SALVAR BD
-          modeMenu(this->ledId);
-          break;
+        if ((millis() - tmpInicio >= tmpLongo)) {
+          if((digitalRead(this->pin_e) == LOW) && (digitalRead(this->pin_l) == LOW)){     
+            //PRESS 2s SALVAR BD
+            modeMenu(this->ledId);
+            break;
+          }
           while (digitalRead(this->btns) == LOW);
-        } else {                                          
-        //PRESS MENOS DE 2s E ACIOMA O LOOP MOD SEM SALVAR
-        modLoopEditeSave(LOW, HIGH);
-        break;
-        while (digitalRead(this->btns) == LOW);
-      }
+        } else if(millis() - tmpCurto < tmpLongo){                                          
+            //PRESS MENOS DE 2s E ACIOMA O LOOP MOD SEM SALVAR
+            modLoopEditeSave(LOW, HIGH);
+            break;
+          while (digitalRead(this->btns) == LOW);
+        }else {
+          continue;
+        }
     }
     cont ++;
   }
 }
 
-void FootSwetch::pin_4Action(){
+void FootSwetch::pinAction(){
 //**************QUADRUPLA FUNÇÃO**************BTN1//
 // BOTÃO EDIT MOD
   tmpInicio = digitalRead(this->btns); //le o estado do botão - HIGH OU LOW
@@ -123,8 +124,8 @@ void FootSwetch::modeMenu(int _id){
   }else if(this->mode == "triple" && _id == 1 && digitalRead(this->pin_e) == HIGH){
     modLoopEditeSave(LOW, LOW); // APAGA OS LED DE LOOP E EDITE
   }else if(digitalRead(this->pin_l) == LOW && digitalRead(this->pin_e) == LOW){
-    confirmeLed(ledsArray[_id]); //COMFIRMEDE ACTION
-    modLoopEditeSave(LOW, HIGH); //RETORNA AO MODO LOOP
+   confirmeLed(ledsArray[_id]); //COMFIRMEDE ACTION
+   modLoopEditeSave(LOW, HIGH); //RETORNA AO MODO LOOP
   }
 }
 

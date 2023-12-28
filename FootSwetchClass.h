@@ -7,8 +7,8 @@ class FootSwetch {
   public:
     FootSwetch(int pin_e = NULL, int pin_l = NULL, int btns = NULL, int ledId = NULL, String mode = "");
     void testesLed();
-    void pin_4Action();
-    void piscaSpeed();
+    void pinAction();
+    void confirm();
   private:
     int pin_e, pin_l, btns, ledId;
     String mode;
