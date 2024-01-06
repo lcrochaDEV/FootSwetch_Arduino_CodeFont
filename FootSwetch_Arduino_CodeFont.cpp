@@ -61,7 +61,7 @@ void FootSwetch::confirmeLed(int blinks){
   }
 }
 
-void FootSwetch::confirm(){
+void FootSwetch::confirmAction(){
   int cont = 0;
   while (cont == 0){
     ctrl74hc595.bits_ci(0xFE);
@@ -69,23 +69,23 @@ void FootSwetch::confirm(){
     ctrl74hc595.bits_ci(0x00);
     delay(100);
     tmpInicio = digitalRead(this->btns); //le o estado do botão - HIGH OU LOW
-    if (!digitalRead(this->btns) == LOW) {
+    if (digitalRead(this->btns) == LOW) {
+      Serial.println("PRESS");
       tmpInicio = millis();
       while ((millis() - tmpInicio < tmpLongo) && (digitalRead(this->btns) == LOW));
-        if ((millis() - tmpInicio >= tmpLongo)) {
-          if((digitalRead(this->pin_e) == LOW) && (digitalRead(this->pin_l) == LOW)){     
-            //PRESS 2s SALVAR BD
-            modeMenu(this->ledId);
-            break;
-          }
+        if ((millis() - tmpInicio >= tmpLongo) && (digitalRead(pin_e) == LOW) && (digitalRead(pin_l) == LOW)){     
+        //PRESS 2s SALVAR BD
+          modeMenu(this->ledId);
+          break;
           while (digitalRead(this->btns) == LOW);
-        } else if(millis() - tmpCurto < tmpLongo){                                          
-            //PRESS MENOS DE 2s E ACIOMA O LOOP MOD SEM SALVAR
-            modLoopEditeSave(LOW, HIGH);
-            break;
-          while (digitalRead(this->btns) == LOW);
-        }else {
+        }else if (millis() - tmpInicio < tmpCurto) {
           continue;
+        } else {                                          
+          //PRESS MENOS DE 2s E ACIOMA O LOOP MOD SEM SALVAR
+          modLoopEditeSave(LOW, HIGH);
+          modeId(this->ledId);
+          break;
+          while (digitalRead(this->btns) == LOW);
         }
     }
     cont ++;
@@ -106,13 +106,16 @@ void FootSwetch::pinAction(){
       else if (digitalRead(this->pin_e) == HIGH){   //CLICK E ACIOMA O LED1 SE O EDITI ESTIVER HIGH
         modeId(this->ledId, true);
       }
-    } else if ((millis() - tmpInicio >= tmpLongo)){
-      modeMenu(this->ledId);
       while (digitalRead(this->btns) == LOW);
+    } else if ((millis() - tmpInicio >= tmpLongo)){
+        //PRESS 2s E ACIOMA MOD SALVAR
+        modeMenu(this->ledId);
+        while (digitalRead(this->btns) == LOW);
     } else {              
         //PRESS -2s E ACIOMA O LOOP MOD SEM SALVAR                            
         modLoopEditeSave(LOW, HIGH);
-      while (digitalRead(this->btns) == LOW);
+        modeId(this->ledId);
+        while (digitalRead(this->btns) == LOW);
     }
   }
 }
@@ -123,9 +126,10 @@ void FootSwetch::modeMenu(int _id){
     modLoopEditeSave(HIGH, LOW, true); // APAGA TODOS OS LEDs DO PAINEL
   }else if(this->mode == "triple" && _id == 1 && digitalRead(this->pin_e) == HIGH){
     modLoopEditeSave(LOW, LOW); // APAGA OS LED DE LOOP E EDITE
+    //confirmAction();
   }else if(digitalRead(this->pin_l) == LOW && digitalRead(this->pin_e) == LOW){
-   confirmeLed(ledsArray[_id]); //COMFIRMEDE ACTION
-   modLoopEditeSave(LOW, HIGH); //RETORNA AO MODO LOOP
+    confirmeLed(ledsArray[_id]); //COMFIRMEDE ACTION
+    modLoopEditeSave(LOW, HIGH); //RETORNA AO MODO LOOP
   }
 }
 

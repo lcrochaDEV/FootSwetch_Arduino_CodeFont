@@ -30,6 +30,12 @@ Console consoleView;
 CI74HC595 ctrl74hc595 = CI74HC595(dataPin, clockPin, latchPin);
 FootSwetch footSwetch = FootSwetch(pin_e, pin_l);
 
+FootSwetch btn1 = FootSwetch(pin_e, pin_l, btn_1, 0, "quadruple");
+FootSwetch btn2 = FootSwetch(pin_e, pin_l, btn_2, 1, "triple");
+FootSwetch btn3 = FootSwetch(pin_e, pin_l, btn_3, 2, "double");
+FootSwetch btn4 = FootSwetch(pin_e, pin_l, btn_4, 3, "double");
+FootSwetch btn5 = FootSwetch(pin_e, pin_l, btn_5, 4, "triple");
+
 void setup() {
   Serial.begin(9600);
 
@@ -60,25 +66,20 @@ void setup() {
 
 void loop() {
   if(digitalRead(btn_1) == LOW) {
-      FootSwetch btn1 = FootSwetch(pin_e, pin_l, btn_1, 0, "quadruple");
       btn1.pinAction();
   }
   if(digitalRead(btn_2) == LOW) {
-      FootSwetch btn2 = FootSwetch(pin_e, pin_l, btn_2, 1, "triple");
       btn2.pinAction();
   } else if ((digitalRead(pin_e) == LOW) && (digitalRead(pin_l) == LOW)){
-     footSwetch.confirm();
+      btn2.confirmAction();
   }
   if(digitalRead(btn_3) == LOW) {
-      FootSwetch btn3 = FootSwetch(pin_e, pin_l, btn_3, 2, "double");
       btn3.pinAction();
   }
   if(digitalRead(btn_4) == LOW) {
-      FootSwetch btn4 = FootSwetch(pin_e, pin_l, btn_4, 3, "double");
       btn4.pinAction();
   }
   if(digitalRead(btn_5) == LOW) {
-      FootSwetch btn5 = FootSwetch(pin_e, pin_l, btn_5, 4, "triple");
       btn5.pinAction();
   }
 }
