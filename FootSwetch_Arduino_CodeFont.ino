@@ -70,9 +70,9 @@ void loop() {
   }
   if(digitalRead(btn_2) == LOW) {
       btn2.pinAction();
-  } else if ((digitalRead(pin_e) == LOW) && (digitalRead(pin_l) == LOW)){
+  }/* else if ((digitalRead(pin_e) == LOW) && (digitalRead(pin_l) == LOW)){
       btn2.confirmAction();
-  }
+  }*/
   if(digitalRead(btn_3) == LOW) {
       btn3.pinAction();
   }
