@@ -121,19 +121,19 @@ void FootSwetch::modeMenu(int _id, bool tmpAction = false){
   //PRESS + 2s E ACIOMA O EDIT MOD E APAGA OS LED D1 - D5
  if(this->mode == "EDIT" && _id == 0 && digitalRead(this->pin_l) == HIGH && tmpAction == true){
     modLoopEditeSave(HIGH, LOW, true); // APAGA TODOS OS LEDs DO PAINEL
-    Serial.println("PRESS EDIT MODE");
+    consoleView.menssageViewMsg("PRESS EDIT MODE");
   }else if(this->mode == "SAVE" && _id == 1 && digitalRead(this->pin_e) == HIGH && tmpAction == true){
     modLoopEditeSave(LOW, LOW); // APAGA OS LED DE LOOP E EDITE
     confirmAction();
-    Serial.println("PRESS SAVE MODE");
+   consoleView.menssageViewMsg("PRESS SAVE MODE");
   }else if(digitalRead(this->pin_l) == LOW && digitalRead(this->pin_e) == LOW && tmpAction == true){
     confirmeLed(ledsArray[_id]); //COMFIRMEDE ACTION
     modLoopEditeSave(LOW, HIGH); //RETORNA AO MODO LOOP
-    Serial.println("CONFIRMA");
+    consoleView.menssageViewMsg("CONFIRMA");
   }else if(tmpAction == false){
     modLoopEditeSave(LOW, HIGH);
     modeId(this->ledId);
-    Serial.println("EXIT MODE");
+    consoleView.menssageViewMsg("EXIT MODE");
   }
 }
 

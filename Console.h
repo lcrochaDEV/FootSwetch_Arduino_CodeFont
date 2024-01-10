@@ -9,7 +9,8 @@ class Console {
     //MENSAGEM DE TODO O PROGRAMA
     void elementName(String consoleText = "ARDUINO");
     void helloWord(String consoleText  = "Hello Word");
-    void messageViewMsg(String consoleText);
+    void menssageViewMsg(String consoleText);
+    void consoleView();
   private:
     String consoleTextView;
 };
