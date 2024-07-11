@@ -2,6 +2,7 @@
 #include "FootSwetchClass.h"
 #include "CI74HC595.h"
 
+extern Console consoleView;
 extern CI74HC595 ctrl74hc595;
 
 //PRESS TIME
