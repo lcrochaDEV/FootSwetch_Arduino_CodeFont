@@ -5,12 +5,12 @@
 
 class FootSwetch {
   public:
-    FootSwetch(int pin_e = NULL, int pin_l = NULL, int btns = NULL, int ledId = NULL, String mode = "");
+    FootSwetch(int mode_edit = NULL, int mode_loop = NULL, int btns = NULL, int ledId = NULL, String mode = "");
     void testesLed();
     void pinAction();
     void confirmAction();
   private:
-    int pin_e, pin_l, btns, ledId;
+    int mode_edit, mode_loop, btns, ledId;
     String mode;
     void modLoopEditeSave(int state_e, int state_l, bool state_bit = false);
     void confirmeLed(int blinks);

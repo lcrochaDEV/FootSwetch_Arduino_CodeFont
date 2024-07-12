@@ -26,13 +26,12 @@
 #define clockPin 11 // 11 74HC595
 #define latchPin 12 // 12 74HC595
 
-Console consoleView;
+Console console;
 CI74HC595 ctrl74hc595 = CI74HC595(dataPin, clockPin, latchPin);
 FootSwetch footSwetch = FootSwetch(pin_e, pin_l);
 
 void setup() {
   Serial.begin(9600);
-
   pinMode(btn_1, INPUT_PULLUP); //PIN_D2
   pinMode(btn_2, INPUT_PULLUP); //PIN_D3
   pinMode(btn_3, INPUT_PULLUP); //PIN_D4
@@ -51,13 +50,13 @@ void setup() {
   int latch = ctrl74hc595.Latch();
 
   //CONSOLE
-  consoleView.elementName("FOOTSWETCH 5 PADS");
-  consoleView.helloWord("O Modulo Iniciou com Sucesso...");
-
+  console.elementName("FOOTSWETCH 5 PADS");
+  console.helloWord("O Modulo Iniciou com Sucesso...");
   //FOOTSWETCH
   footSwetch.testesLed();
 }
 void loop() {
+  /*
   FootSwetch btn1 = FootSwetch(pin_e, pin_l, btn_1, 0, "EDIT");
   if(digitalRead(btn_1) == LOW) {
       btn1.pinAction();
@@ -65,9 +64,7 @@ void loop() {
   if(digitalRead(btn_2) == LOW) {
   FootSwetch btn2 = FootSwetch(pin_e, pin_l, btn_2, 1, "SAVE");
       btn2.pinAction();
-  }/* else if ((digitalRead(pin_e) == LOW) && (digitalRead(pin_l) == LOW)){
-      btn2.confirmAction();
-  }*/
+  }
   if(digitalRead(btn_3) == LOW) {
   FootSwetch btn3 = FootSwetch(pin_e, pin_l, btn_3, 2);
       btn3.pinAction();
@@ -80,4 +77,5 @@ void loop() {
   FootSwetch btn5 = FootSwetch(pin_e, pin_l, btn_5, 4);
       btn5.pinAction();
   }
+  */
 }

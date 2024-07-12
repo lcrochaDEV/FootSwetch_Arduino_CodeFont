@@ -2,7 +2,7 @@
 #include "FootSwetchClass.h"
 #include "CI74HC595.h"
 
-extern Console consoleView;
+extern Console console;
 extern CI74HC595 ctrl74hc595;
 
 //PRESS TIME
@@ -16,9 +16,9 @@ int relaysArray[] = {3, 4, 5, 6, 7};
 //PINOS QUE SE REFERE AO PINOS DO CI74HC595 LOOP
 int ledsArray[] = {10, 11, 12, 13, 14};
 
-FootSwetch::FootSwetch(int pin_e = NULL, int pin_l = NULL, int btns = NULL, int ledId = NULL, String mode = ""){
-  this->pin_e = pin_e;
-  this->pin_l = pin_l;
+FootSwetch::FootSwetch(int mode_edit = NULL, int mode_loop = NULL, int btns = NULL, int ledId = NULL, String mode = ""){
+  this->mode_edit = mode_edit;
+  this->mode_loop = mode_loop;
   this->btns = btns;
   this->ledId = ledId;
   this->mode = mode;
@@ -37,17 +37,18 @@ void FootSwetch::testesLed() { //ACÃO REALIZADA APÓS LIGAR FOOTROUTER
         delay(50);
       }
     }
+    Serial.println(this->btns);
   } 
-    digitalWrite(this->pin_e, HIGH);
-    digitalWrite(this->pin_l, HIGH);  //INCIA EM LOOP MODE
+    digitalWrite(this->mode_edit, HIGH);
+    digitalWrite(this->mode_loop, HIGH);  //INICIA EM LOOP MODE
     delay(400);
     ctrl74hc595.toggle(NULL, ledsArray[0]); 
-    digitalWrite(this->pin_e, LOW);
+    digitalWrite(this->mode_edit, LOW);
 }
 
 void FootSwetch::modLoopEditeSave(int state_e, int state_l, bool state_bit = false){
-  digitalWrite(this->pin_e, state_e);
-  digitalWrite(this->pin_l, state_l);
+  digitalWrite(this->mode_edit, state_e);
+  digitalWrite(this->mode_loop, state_l);
   if(state_bit){
     ctrl74hc595.bits_ci(0x00);
   }
@@ -61,7 +62,18 @@ void FootSwetch::confirmeLed(int blinks){
     delay(100); 
   }
 }
-
+void FootSwetch::confirmAction(){
+  while (true){
+    ctrl74hc595.bits_ci(0xFE);
+    delay(100);
+    ctrl74hc595.bits_ci(0x00);
+    delay(100);
+    tmpInicio = digitalRead(this->btns); //le o estado do botão - HIGH OU LOW
+    if (digitalRead(4) == LOW) {
+    }
+  }
+}
+/*
 void FootSwetch::confirmAction(){
   int cont = 0;
   while (cont == 0){
@@ -73,7 +85,7 @@ void FootSwetch::confirmAction(){
     if (digitalRead(this->btns) == LOW) {
       tmpInicio = millis();
       while ((millis() - tmpInicio < tmpLongo) && (digitalRead(this->btns) == LOW));
-        if ((millis() - tmpInicio >= tmpLongo) && (digitalRead(pin_e) == LOW) && (digitalRead(pin_l) == LOW)){     
+        if ((millis() - tmpInicio >= tmpLongo) && (digitalRead(mode_edit) == LOW) && (digitalRead(mode_loop) == LOW)){     
         //PRESS 2s SALVAR BD
           modeMenu(this->ledId, true);
           break;
@@ -90,7 +102,7 @@ void FootSwetch::confirmAction(){
     //cont ++;
   }
 }
-
+*/
 void FootSwetch::pinAction(){
 //**************QUADRUPLA FUNÇÃO**************BTN1//
 // BOTÃO EDIT MOD
@@ -99,19 +111,19 @@ void FootSwetch::pinAction(){
     tmpInicio = millis();
     while ((millis() - tmpInicio < tmpLongo) && (digitalRead(this->btns) == LOW));
     if ((millis() - tmpInicio < tmpCurto)){         //CLICK E ACIOMA O LED1 SE O EDITI ESTIVER LOW
-      if(digitalRead(this->pin_l) == HIGH){
+      if(digitalRead(this->mode_loop) == HIGH){
         modeId(this->ledId);
       }
-      else if (digitalRead(this->pin_e) == HIGH){   //CLICK E ACIOMA O LED1 SE O EDITI ESTIVER HIGH
+      else if (digitalRead(this->mode_edit) == HIGH){   //CLICK E ACIOMA O LED1 SE O EDIT ESTIVER HIGH
         modeId(this->ledId);
       }
       while (digitalRead(this->btns) == LOW);
     } else if ((millis() - tmpInicio >= tmpLongo)){
-        //PRESS 2s E ACIOMA MOD LOOP
+        //PRESS <2s E ACIOMA MOD LOOP
         modeMenu(this->ledId, true);
         while (digitalRead(this->btns) == LOW);
     } else {              
-        //PRESS -2s E ACIOMA O LOOP MOD SEM SALVAR 
+        //PRESS >2s E ACIOMA O LOOP MOD SEM SALVAR 
         modeMenu(this->ledId);
         while (digitalRead(this->btns) == LOW);
     }
@@ -120,21 +132,21 @@ void FootSwetch::pinAction(){
 
 void FootSwetch::modeMenu(int _id, bool tmpAction = false){
   //PRESS + 2s E ACIOMA O EDIT MOD E APAGA OS LED D1 - D5
- if(this->mode == "EDIT" && _id == 0 && digitalRead(this->pin_l) == HIGH && tmpAction == true){
+ if(this->mode == "EDIT" && _id == 0 && digitalRead(this->mode_loop) == HIGH && tmpAction == true){
     modLoopEditeSave(HIGH, LOW, true); // APAGA TODOS OS LEDs DO PAINEL
-    consoleView.menssageViewMsg("PRESS EDIT MODE");
-  }else if(this->mode == "SAVE" && _id == 1 && digitalRead(this->pin_e) == HIGH && tmpAction == true){
+    console.menssageViewMsg("PRESS EDIT MODE");
+  }else if(this->mode == "SAVE" && _id == 1 && digitalRead(this->mode_edit) == HIGH && tmpAction == true){
     modLoopEditeSave(LOW, LOW); // APAGA OS LED DE LOOP E EDITE
-    confirmAction();
-   consoleView.menssageViewMsg("PRESS SAVE MODE");
-  }else if(digitalRead(this->pin_l) == LOW && digitalRead(this->pin_e) == LOW && tmpAction == true){
+    confirmAction();//ENTRA EM MODO LOOP
+   console.menssageViewMsg("PRESS SAVE MODE");
+  }else if(digitalRead(this->mode_loop) == LOW && digitalRead(this->mode_edit) == LOW && tmpAction == true){
     confirmeLed(ledsArray[_id]); //COMFIRMEDE ACTION
     modLoopEditeSave(LOW, HIGH); //RETORNA AO MODO LOOP
-    consoleView.menssageViewMsg("CONFIRMA");
+    console.menssageViewMsg("CONFIRMA");
   }else if(tmpAction == false){
     modLoopEditeSave(LOW, HIGH);
     modeId(this->ledId);
-    consoleView.menssageViewMsg("EXIT MODE");
+    console.menssageViewMsg("EXIT MODE");
   }
 }
 
