@@ -26,9 +26,12 @@
 #define clockPin 11 // 11 74HC595
 #define latchPin 12 // 12 74HC595
 
+int arrayBtns[] = {btn_1, btn_2, btn_3, btn_4, btn_5};
+
+
 Console console;
 CI74HC595 ctrl74hc595 = CI74HC595(dataPin, clockPin, latchPin);
-FootSwetch footSwetch = FootSwetch(pin_e, pin_l);
+FootSwetch footSwetch = FootSwetch(pin_e, pin_l, arrayBtns);
 
 void setup() {
   Serial.begin(9600);
@@ -54,28 +57,35 @@ void setup() {
   console.helloWord("O Modulo Iniciou com Sucesso...");
   //FOOTSWETCH
   footSwetch.testesLed();
+/*
+  int n = sizeof(arrayPins)/sizeof(int);
+  for (int i = 0; i < n; i++) {
+      Serial.println(arrayPins[i]);
+      delay(10);
+  };
+*/
 }
 void loop() {
-  /*
-  FootSwetch btn1 = FootSwetch(pin_e, pin_l, btn_1, 0, "EDIT");
+  //FootSwetch btn1 = FootSwetch(pin_e, , btn_1, 0, "EDIT");
   if(digitalRead(btn_1) == LOW) {
-      btn1.pinAction();
+      footSwetch.pinAction(btn_1, 0, pin_e);
   }
+  
   if(digitalRead(btn_2) == LOW) {
-  FootSwetch btn2 = FootSwetch(pin_e, pin_l, btn_2, 1, "SAVE");
-      btn2.pinAction();
+  //FootSwetch btn2 = FootSwetch(pin_e, pin_l, btn_2, 1, "SAVE");
+      footSwetch.pinAction(btn_2, 1, pin_l);
   }
+
   if(digitalRead(btn_3) == LOW) {
-  FootSwetch btn3 = FootSwetch(pin_e, pin_l, btn_3, 2);
-      btn3.pinAction();
+  //FootSwetch btn3 = FootSwetch(pin_e, pin_l, btn_3, 2);
+      footSwetch.pinAction(btn_3, 2);
   }
   if(digitalRead(btn_4) == LOW) {
-  FootSwetch btn4 = FootSwetch(pin_e, pin_l, btn_4, 3);
-      btn4.pinAction();
+  //FootSwetch btn4 = FootSwetch(pin_e, pin_l, btn_4, 3);
+      footSwetch.pinAction(btn_4, 3);
   }
   if(digitalRead(btn_5) == LOW) {
-  FootSwetch btn5 = FootSwetch(pin_e, pin_l, btn_5, 4);
-      btn5.pinAction();
+  //FootSwetch btn5 = FootSwetch(pin_e, pin_l, btn_5, 4);
+      footSwetch.pinAction(btn_5, 4);
   }
-  */
 }
