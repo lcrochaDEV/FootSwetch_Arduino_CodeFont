@@ -118,37 +118,35 @@ void FootSwetch::pinAction(int btn = NULL, int ledId = NULL, int pinMode = NULL)
     tmpInicio = millis();
     while ((millis() - tmpInicio < tmpLongo) && (digitalRead(btn) == LOW));
     if ((millis() - tmpInicio < tmpCurto)){         //CLICK E ACIOMA O LED1 SE O EDITI ESTIVER LOW
-      if(digitalRead(this->mode_loop == pinMode) == HIGH){
+      if(digitalRead(this->mode_loop) == HIGH){
         modeId(ledId);
       }
-      else if (digitalRead(this->mode_edit == pinMode) == HIGH){   //CLICK E ACIOMA O LED1 SE O EDIT ESTIVER HIGH
-        modeId(ledId);
+      else if (digitalRead(this->mode_edit) == HIGH){   //CLICK E ACIOMA O LED1 SE O EDIT ESTIVER HIGH
+        modeId(ledId, true);
       }
       while (digitalRead(btn) == LOW);
 
-    } else if ((millis() - tmpInicio >= tmpLongo)){
-        //PRESS <2s E ACIOMA MOD LOOP
-        if(this->mode_edit == pinMode || this->mode_loop == pinMode){
-          modeMenu(ledId, pinMode);
-        }else{
-          modeMenu(ledId);
-        }
-        while (digitalRead(btn) == LOW);
-
-    } else {              
-        //PRESS >2s E ACIOMA O LOOP MOD SEM SALVAR 
-        modeMenu(ledId);
-        while (digitalRead(btn) == LOW);
-    }
+    }else if ((millis() - tmpInicio >= tmpLongo)){
+      //PRESS + 2s ACIOMA MOD EDIT
+      if(this->mode_edit == pinMode || this->mode_loop == pinMode){
+        modeMenu(ledId, pinMode);
+      }
+      while (digitalRead(btn) == LOW);
+    }else {              
+      //PRESS >2s E ACIOMA O LOOP MOD SEM SALVAR 
+        modeMenu(ledId, -1);
+      }
+    while (digitalRead(btn) == LOW);
+    
   }
 }
 
 void FootSwetch::modeMenu(int _id, int pinMode = NULL){
   //PRESS + 2s E ACIOMA O EDIT MOD E APAGA OS LED D1 - D5
- if(digitalRead(this->mode_loop) == HIGH && pinMode == this->mode_edit){
+ if(digitalRead(this->mode_loop) == HIGH && this->mode_edit == pinMode){
     modLoopEditeSave(HIGH, LOW, true); // APAGA TODOS OS LEDs DO PAINEL
     console.menssageViewMsg("PRESS EDIT MODE");
-  }else if(digitalRead(this->mode_edit) == HIGH && pinMode == this->mode_loop){
+  }else if(digitalRead(this->mode_edit) == HIGH && this->mode_loop == pinMode){
     modLoopEditeSave(LOW, LOW); // APAGA OS LED DE LOOP E EDITE
     //confirmAction();//ENTRA EM MODO LOOP
     console.menssageViewMsg("PRESS SAVE MODE");
@@ -156,28 +154,12 @@ void FootSwetch::modeMenu(int _id, int pinMode = NULL){
     confirmeLed(ledsArray[_id]); //COMFIRMEDE ACTION
     modLoopEditeSave(LOW, HIGH); //RETORNA AO MODO LOOP
     console.menssageViewMsg("CONFIRMA");
-  }else {
+  }else if (pinMode == -1){
     modLoopEditeSave(LOW, HIGH);
     modeId(_id);
     console.menssageViewMsg("EXIT MODE");
   }
 }
-/*
-  }else if(this->mode == "SAVE" && _id == 1 && digitalRead(this->mode_edit) == HIGH && tmpAction == true){
-    modLoopEditeSave(LOW, LOW); // APAGA OS LED DE LOOP E EDITE
-    confirmAction();//ENTRA EM MODO LOOP
-   console.menssageViewMsg("PRESS SAVE MODE");
-  }else if(digitalRead(this->mode_loop) == LOW && digitalRead(this->mode_edit) == LOW && tmpAction == true){
-    confirmeLed(ledsArray[_id]); //COMFIRMEDE ACTION
-    modLoopEditeSave(LOW, HIGH); //RETORNA AO MODO LOOP
-    console.menssageViewMsg("CONFIRMA");
-  }else if(tmpAction == false){
-    modLoopEditeSave(LOW, HIGH);
-    //modeId(this->ledId);
-    console.menssageViewMsg("EXIT MODE");
-  }
-}
-  */
 
 void FootSwetch::modeId(int _id, bool actions = false){
   if(actions == false){
