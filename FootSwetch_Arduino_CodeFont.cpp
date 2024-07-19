@@ -130,6 +130,8 @@ void FootSwetch::pinAction(int btn = NULL, int ledId = NULL, int pinMode = NULL)
       //PRESS + 2s ACIOMA MOD EDIT
       if(this->mode_edit == pinMode || this->mode_loop == pinMode){
         modeMenu(ledId, pinMode);
+      }else{
+        modeMenu(ledId);
       }
       while (digitalRead(btn) == LOW);
     }else {              
