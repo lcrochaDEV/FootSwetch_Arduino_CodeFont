@@ -1,16 +1,16 @@
 #ifndef FOOTSWETCH_H
 #define FOOTSWETCH_H
- 
+
 #include <Arduino.h>
 
 class FootSwetch {
   public:
-    FootSwetch(int mode_edit = NULL, int mode_loop = NULL, int btns[] = NULL);
-    void testesLed();
+    FootSwetch(int mode_edit = NULL, int mode_loop = NULL);
+    void incialTestLed();
     void pinAction(int btnId = NULL, int ledId = NULL, int pinMode = NULL);
     void confirmAction();
   private:
-    int mode_edit, mode_loop, *btns;
+    int mode_edit, mode_loop;
     String mode;
     void modLoopEditeSave(int state_e, int state_l, bool state_bit = false);
     void confirmeLed(int blinks);
