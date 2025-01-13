@@ -8,8 +8,18 @@ void Console::elementName(String consoleText = "ARDUINO"){
   Serial.println(consoleText);
 }
 void Console::helloWord(String consoleText = "Hello Word"){
-  messageViewMsg(consoleText);
+  menssageViewMsg(consoleText);
 }
-void Console::messageViewMsg(String consoleText){
+void Console::menssageViewMsg(String consoleText){
   Serial.println(consoleText);
+}
+void Console::consoleView(){
+  if (Serial.available() > 0) {
+    String consoleText = Serial.readString();
+    consoleText.trim();
+    if (consoleText.length() > 0) {
+      consoleText.toUpperCase();
+      menssageViewMsg(consoleText);
+    }
+  }
 }
