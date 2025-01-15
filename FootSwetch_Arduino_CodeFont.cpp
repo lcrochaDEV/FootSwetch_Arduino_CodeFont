@@ -43,10 +43,8 @@ void FootSwetch::incialTestLed() { //AÇÃO REALIZADA APÓS LIGAR FOOTROUTER
     contador++;
   }
   modLoopEditeSave(LOW, HIGH, true); // MODE LOOP
-  delay(400);
-  ctrl74hc595.toggle(-1, ledsArray[0]); 
 }
-//(int btnId = NULL, int ledId = NULL, String mode = "");
+
 void FootSwetch::pinAction(int btnId = NULL, int ledId = NULL, int pinMode = NULL){
 //**************QUADRUPLA FUNÇÃO**************BTN1//
   // BOTÃO EDIT MOD
@@ -88,8 +86,7 @@ void FootSwetch::modeMenu(int _id = NULL, int ledId = NULL, int pinMode = NULL){
     modLoopEditeSave(LOW, LOW); // APAGA OS LED DE LOOP E EDITE
     console.menssageViewMsg("PRESS SAVE MODE");
   }else if(digitalRead(this->mode_edit) == HIGH && pinMode == -1){
-    modLoopEditeSave(LOW, HIGH);
-    modeId(_id, ledId);
+    modLoopEditeSave(LOW, HIGH); // RETORNO SEM SALVAR
     console.menssageViewMsg("EXIT MODE");
   }else if(digitalRead(this->mode_loop) == LOW && digitalRead(this->mode_edit) == LOW){
     confirmAction(_id, ledId);//ACIONA LOOP DE CONFIRMAÇÃO
@@ -99,8 +96,10 @@ void FootSwetch::modeMenu(int _id = NULL, int ledId = NULL, int pinMode = NULL){
 void FootSwetch::modLoopEditeSave(int state_e, int state_l, bool state_bit = false){
   digitalWrite(this->mode_edit, state_e);
   digitalWrite(this->mode_loop, state_l);
+  delay(400);
+  ctrl74hc595.bits_ci(0x08);
   if(state_bit){
-   ctrl74hc595.bits_ci(0x00);
+    ctrl74hc595.bits_ci(0x00);
   }
 }
 void FootSwetch::confirmAction(int _id = NULL, int ledId = NULL){ //AGUARDA CONFIRMAÇÃO
@@ -109,7 +108,7 @@ void FootSwetch::confirmAction(int _id = NULL, int ledId = NULL){ //AGUARDA CONF
     confirmeLed(ledsArray[ledId]); //COMFIRMEDE ACTION
     modLoopEditeSave(LOW, HIGH);   //RETORNA AO MODO LOOP
   }else{
-    ctrl74hc595.bits_ci(0xFE);
+    ctrl74hc595.bits_ci(0x08);
     delay(100);
     ctrl74hc595.bits_ci(0x00);
     delay(100);
@@ -117,7 +116,7 @@ void FootSwetch::confirmAction(int _id = NULL, int ledId = NULL){ //AGUARDA CONF
 }
 void FootSwetch::confirmeLed(int blinks){ //CONFIRMAÇÃO
   for (int i = 0; i <= 4; i++){ 
-    ctrl74hc595.toggle(-1, 0); 
+    ctrl74hc595.bits_ci(0x00); 
     delay(100);
     ctrl74hc595.toggle(-1, blinks); 
     delay(100);
