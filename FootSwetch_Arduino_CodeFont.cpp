@@ -28,23 +28,23 @@ FootSwetch::FootSwetch(int mode_edit = NULL, int mode_loop = NULL){
 
 //===================================INICIALIZAÇÃO E TESTES LEDS================================//
 void FootSwetch::incialTestLed() { //AÇÃO REALIZADA APÓS LIGAR FOOTROUTER
-  for (int i = 0; i < 2; i++) {
-     //LEDS DOS RELAYs     
-     for (int r = 3; r < 8; r++) {
-        ctrl74hc595.toggle(r, NULL); 
-        delay(50); 
-     //LEDS DOS LEDS     
-     for (int l = 11; l <= 15; l++) {
-        ctrl74hc595.toggle(l, NULL); 
+  int contador = 0;
+  while (contador < 2) {
+     //LEDS DOS RELAYs   
+    for (int r = 3; r < 8; r++) {
+          ctrl74hc595.toggle(r, -1); 
+          delay(50); 
+      //LEDS DOS LEDS     
+      for (int l = 11; l <= 15; l++) {
+        ctrl74hc595.toggle(l, -1); 
         delay(50);
       }
-    }    
-  } 
-  digitalWrite(this->mode_edit, HIGH);
-  digitalWrite(this->mode_loop, HIGH);  //INICIA EM LOOP MODE
+    }
+    contador++;
+  }
+  modLoopEditeSave(LOW, HIGH, true); // MODE LOOP
   delay(400);
-  ctrl74hc595.toggle(NULL, ledsArray[0]); 
-  digitalWrite(this->mode_edit, LOW);
+  ctrl74hc595.toggle(-1, ledsArray[0]); 
 }
 //(int btnId = NULL, int ledId = NULL, String mode = "");
 void FootSwetch::pinAction(int btnId = NULL, int ledId = NULL, int pinMode = NULL){
@@ -100,7 +100,7 @@ void FootSwetch::modLoopEditeSave(int state_e, int state_l, bool state_bit = fal
   digitalWrite(this->mode_edit, state_e);
   digitalWrite(this->mode_loop, state_l);
   if(state_bit){
-    ctrl74hc595.bits_ci(0x00);
+   ctrl74hc595.bits_ci(0x00);
   }
 }
 void FootSwetch::confirmAction(int _id = NULL, int ledId = NULL){ //AGUARDA CONFIRMAÇÃO
@@ -117,16 +117,16 @@ void FootSwetch::confirmAction(int _id = NULL, int ledId = NULL){ //AGUARDA CONF
 }
 void FootSwetch::confirmeLed(int blinks){ //CONFIRMAÇÃO
   for (int i = 0; i <= 4; i++){ 
-    ctrl74hc595.toggle(NULL, 0); 
+    ctrl74hc595.toggle(-1, 0); 
     delay(100);
-    ctrl74hc595.toggle(NULL, blinks); 
+    ctrl74hc595.toggle(-1, blinks); 
     delay(100);
   }
 }
 void FootSwetch::modeId(int _id, bool actions = false){
   if(actions == false){
-    ctrl74hc595.toggle(NULL, ledsArray[_id]);
+    ctrl74hc595.toggle(-1, ledsArray[_id]);
   }else if(actions == true){
-    ctrl74hc595.toggle(relaysArray[_id], NULL);
+    ctrl74hc595.toggle(relaysArray[_id], -1);
   }
 }
