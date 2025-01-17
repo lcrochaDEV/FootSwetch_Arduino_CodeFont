@@ -12,6 +12,10 @@ long tmpInicio;
 #define tmpLongo 2000
 #define tmpCurto 300
 
+//MEMORY
+//int buffermMemory[];
+int bin[] = {0, 0, 0, 0, 0, 0, 0, 0};
+
 //PINOS QUE SE REFERE AO PINOS DO CI74HC595 RELAY
 int relaysArray[] = {3, 4, 5, 6, 7};
 
@@ -25,7 +29,6 @@ FootSwetch::FootSwetch(int mode_edit = NULL, int mode_loop = NULL){
   this->mode_edit = mode_edit;
   this->mode_loop = mode_loop;
 }
-
 //===================================INICIALIZAÇÃO E TESTES LEDS================================//
 void FootSwetch::incialTestLed() { //AÇÃO REALIZADA APÓS LIGAR FOOTROUTER
   int contador = 0;
@@ -42,9 +45,8 @@ void FootSwetch::incialTestLed() { //AÇÃO REALIZADA APÓS LIGAR FOOTROUTER
     }
     contador++;
   }
-  modLoopEditeSave(LOW, HIGH, true); // MODE LOOP
+  modLoopEditeSave(LOW, HIGH); // MODE LOOP
 }
-
 void FootSwetch::pinAction(int btnId = NULL, int ledId = NULL, int pinMode = NULL){
 //**************QUADRUPLA FUNÇÃO**************BTN1//
   // BOTÃO EDIT MOD
@@ -80,7 +82,7 @@ void FootSwetch::pinAction(int btnId = NULL, int ledId = NULL, int pinMode = NUL
 void FootSwetch::modeMenu(int _id = NULL, int ledId = NULL, int pinMode = NULL){
   //PRESS + 2s E ACIOMA O EDIT MOD E APAGA OS LED D1 - D5
   if(digitalRead(this->mode_loop) == HIGH && this->mode_edit == pinMode){
-    modLoopEditeSave(HIGH, LOW, true); // APAGA TODOS OS LEDs DO PAINEL
+    modLoopEditeSave(HIGH, LOW, 1); // APAGA TODOS OS LEDs DO PAINEL
     console.menssageViewMsg("PRESS EDIT MODE");
   }else if(digitalRead(this->mode_edit) == HIGH && this->mode_loop == pinMode){
     modLoopEditeSave(LOW, LOW); // APAGA OS LED DE LOOP E EDITE
@@ -93,22 +95,23 @@ void FootSwetch::modeMenu(int _id = NULL, int ledId = NULL, int pinMode = NULL){
     console.menssageViewMsg("LOOP");
   }
 }
-void FootSwetch::modLoopEditeSave(int state_e, int state_l, bool state_bit = false){
+void FootSwetch::modLoopEditeSave(int state_e, int state_l, int state_bit = 0){
   digitalWrite(this->mode_edit, state_e);
   digitalWrite(this->mode_loop, state_l);
   delay(400);
-  ctrl74hc595.bits_ci(0x08);
-  if(state_bit){
+  if(state_bit == 1){
     ctrl74hc595.bits_ci(0x00);
+  }else if(state_bit == 0){
+    ctrl74hc595.bits_ci(0x08);
   }
 }
 void FootSwetch::confirmAction(int _id = NULL, int ledId = NULL){ //AGUARDA CONFIRMAÇÃO
   if(_id != NULL){
     Serial.println("CONFIRMACAO");
     confirmeLed(ledsArray[ledId]); //COMFIRMEDE ACTION
-    modLoopEditeSave(LOW, HIGH);   //RETORNA AO MODO LOOP
+    modLoopEditeSave(LOW, HIGH, -1);   //RETORNA AO MODO LOOP
   }else{
-    ctrl74hc595.bits_ci(0x08);
+    ctrl74hc595.bits_ci(0xF8);
     delay(100);
     ctrl74hc595.bits_ci(0x00);
     delay(100);
@@ -127,5 +130,9 @@ void FootSwetch::modeId(int _id, bool actions = false){
     ctrl74hc595.toggle(-1, ledsArray[_id]);
   }else if(actions == true){
     ctrl74hc595.toggle(relaysArray[_id], -1);
+    bin[_id] == 1 ? bin[_id] = 0 : bin[_id] = 1;
   }
+}
+void FootSwetch::saveMemory(){
+  
 }
