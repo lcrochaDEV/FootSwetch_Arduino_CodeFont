@@ -1,7 +1,10 @@
+#include "HardwareSerial.h"
 #include "Console.h"
 #include "FootSwetchClass.h"
 #include "CI74HC595.h"
 
+//MEMORY
+//int buffermMemory[];
 byte ci74HC595[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 CI74HC595::CI74HC595(int dataPin, int clockPin, int latchPin){
@@ -22,14 +25,15 @@ int CI74HC595::Latch(){
 
 //==================================CONVERSOR DECIMAL PARA BINÁRIO ACIONAMENTO LED A LED RELAY================================//
 /* POSIÇÃO vai de 1-8 */
-void CI74HC595::toggle(int posicao, int pin_ci) { //INTERAÇÃO ENVIO DE UM BIT
+void CI74HC595::toggle(int pin_ci) { //INTERAÇÃO ENVIO DE UM BIT
   //SELECIONA UM LED POR VEZ NO LOOP MOD
-  for (int ci = 10; ci <= 16; ci++){
-   ci74HC595[ci] == 1 ? ci74HC595[ci] = 0 : ci74HC595[pin_ci] = 1;
+  for (int ci = 9; ci <= 15; ci++){
+    if(ci74HC595[ci] = 1){
+      ci74HC595[ci] = 0;
+    }
   }
-    //SELECIONDA OS LEDS RALAY EM MOD EDIT
-   ci74HC595[posicao - 1] == 1 ? ci74HC595[posicao - 1] = 0 : ci74HC595[posicao - 1] = 1;
-   updateShift();
+  ci74HC595[pin_ci] == 1 ? ci74HC595[pin_ci] = 0 : ci74HC595[pin_ci] = 1;
+  updateShift();
 }
 
 void CI74HC595::updateShift() {

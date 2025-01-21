@@ -12,12 +12,8 @@ long tmpInicio;
 #define tmpLongo 2000
 #define tmpCurto 300
 
-//MEMORY
-//int buffermMemory[];
-int bin[] = {0, 0, 0, 0, 0, 0, 0, 0};
-
 //PINOS QUE SE REFERE AO PINOS DO CI74HC595 RELAY
-int relaysArray[] = {3, 4, 5, 6, 7};
+int relaysArray[] = {2, 3, 4, 5, 6};
 
 //PINOS QUE SE REFERE AO PINOS DO CI74HC595 LOOP
 int ledsArray[] = {10, 11, 12, 13, 14};
@@ -34,14 +30,14 @@ void FootSwetch::incialTestLed() { //AÇÃO REALIZADA APÓS LIGAR FOOTROUTER
   int contador = 0;
   while (contador < 2) {
      //LEDS DOS RELAYs   
-    for (int r = 3; r < 8; r++) {
-          ctrl74hc595.toggle(r, -1); 
+    for (int r = 0; r < len(relaysArray); r++) {
+          ctrl74hc595.toggle(relaysArray[r]); 
           delay(50); 
-      //LEDS DOS LEDS     
-      for (int l = 11; l <= 15; l++) {
-        ctrl74hc595.toggle(l, -1); 
-        delay(50);
-      }
+          //LEDS DOS LEDS     
+          for (int l = 0; l <= len(ledsArray); l++) {
+            ctrl74hc595.toggle(ledsArray[l]); 
+            delay(50);
+          }
     }
     contador++;
   }
@@ -119,20 +115,17 @@ void FootSwetch::confirmAction(int _id = NULL, int ledId = NULL){ //AGUARDA CONF
 }
 void FootSwetch::confirmeLed(int blinks){ //CONFIRMAÇÃO
   for (int i = 0; i <= 4; i++){ 
-    ctrl74hc595.bits_ci(0x00); 
+    Serial.println(blinks);
+    ctrl74hc595.toggle(blinks);
     delay(100);
-    ctrl74hc595.toggle(-1, blinks); 
+    ctrl74hc595.toggle(blinks); 
     delay(100);
   }
 }
 void FootSwetch::modeId(int _id, bool actions = false){
   if(actions == false){
-    ctrl74hc595.toggle(-1, ledsArray[_id]);
+    ctrl74hc595.toggle(ledsArray[_id]);
   }else if(actions == true){
-    ctrl74hc595.toggle(relaysArray[_id], -1);
-    bin[_id] == 1 ? bin[_id] = 0 : bin[_id] = 1;
+    ctrl74hc595.toggle(relaysArray[_id]);
   }
-}
-void FootSwetch::saveMemory(){
-  
 }

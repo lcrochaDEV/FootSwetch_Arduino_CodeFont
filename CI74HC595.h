@@ -9,7 +9,7 @@ class CI74HC595 {
     int Data();
     int Clock();
     int Latch();
-    void toggle(int posicao, int pin_ci);
+    void toggle(int pin_ci);
     void updateShift();
     void bits_ci(int On_Off);
   private:
