@@ -41,7 +41,7 @@ void FootSwetch::incialTestLed() { //AÇÃO REALIZADA APÓS LIGAR FOOTROUTER
     }
     contador++;
   }
-  modLoopEditeSave(LOW, HIGH); // MODE LOOP
+  modLoopEditeSave(LOW, HIGH, 1); // MODE LOOP
 }
 void FootSwetch::pinAction(int btnId = NULL, int ledId = NULL, int pinMode = NULL){
 //**************QUADRUPLA FUNÇÃO**************BTN1//
@@ -78,13 +78,13 @@ void FootSwetch::pinAction(int btnId = NULL, int ledId = NULL, int pinMode = NUL
 void FootSwetch::modeMenu(int _id = NULL, int ledId = NULL, int pinMode = NULL){
   //PRESS + 2s E ACIOMA O EDIT MOD E APAGA OS LED D1 - D5
   if(digitalRead(this->mode_loop) == HIGH && this->mode_edit == pinMode){
-    modLoopEditeSave(HIGH, LOW, 1); // APAGA TODOS OS LEDs DO PAINEL
+    modLoopEditeSave(HIGH, LOW); // APAGA TODOS OS LEDs DO PAINEL
     console.menssageViewMsg("PRESS EDIT MODE");
   }else if(digitalRead(this->mode_edit) == HIGH && this->mode_loop == pinMode){
     modLoopEditeSave(LOW, LOW); // APAGA OS LED DE LOOP E EDITE
     console.menssageViewMsg("PRESS SAVE MODE");
   }else if(digitalRead(this->mode_edit) == HIGH && pinMode == -1){
-    modLoopEditeSave(LOW, HIGH); // RETORNO SEM SALVAR
+    modLoopEditeSave(LOW, HIGH, 1); // RETORNO SEM SALVAR
     console.menssageViewMsg("EXIT MODE");
   }else if(digitalRead(this->mode_loop) == LOW && digitalRead(this->mode_edit) == LOW){
     confirmAction(_id, ledId);//ACIONA LOOP DE CONFIRMAÇÃO
@@ -95,9 +95,9 @@ void FootSwetch::modLoopEditeSave(int state_e, int state_l, int state_bit = 0){
   digitalWrite(this->mode_edit, state_e);
   digitalWrite(this->mode_loop, state_l);
   delay(400);
-  if(state_bit == 1){
+  if(state_bit == 0){
     ctrl74hc595.bits_ci(0x00);
-  }else if(state_bit == 0){
+  }else if(state_bit == 1){
     ctrl74hc595.bits_ci(0x08);
   }
 }
@@ -115,8 +115,7 @@ void FootSwetch::confirmAction(int _id = NULL, int ledId = NULL){ //AGUARDA CONF
 }
 void FootSwetch::confirmeLed(int blinks){ //CONFIRMAÇÃO
   for (int i = 0; i <= 4; i++){ 
-    Serial.println(blinks);
-    ctrl74hc595.toggle(blinks);
+    ctrl74hc595.toggle(0xF8);
     delay(100);
     ctrl74hc595.toggle(blinks); 
     delay(100);
